@@ -1,3 +1,5 @@
+export const ADD_COMMIT = 'ADD_COMMIT'
+
 export const GET_COMMITS = 'GET_COMMITS'
 
 export const getCommits = (account, repository) => ({

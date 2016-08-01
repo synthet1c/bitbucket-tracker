@@ -1,3 +1,4 @@
+import _ from 'ramda'
 import { combineReducers } from 'redux'
 import { repositories } from './reducers/repositories'
 import { commits } from './reducers/commits'
@@ -6,12 +7,14 @@ import bitbucket from './bitbucket'
 import { CHANGE_PAGE } from './actions/actions'
 
 import {
+  ADD_COMMIT,
   SELECT_COMMIT,
   REQUEST_COMMITS,
   RECIEVE_COMMITS
 } from './actions/commits'
 
 import {
+  ADD_REPOSITORY,
   SELECT_REPOSITORY,
   REQUEST_REPOSITORIES,
   RECIEVE_REPOSITORIES
@@ -64,27 +67,16 @@ const entities = (state = {}, action) => {
 }
 
 const frontend = (state = {
-  repositories: {},
-  commits: {}
+  repositories: [],
+  commits: []
 }, action) => {
   switch (action.type) {
     case CHANGE_PAGE:
-      return {
-        ...state,
-        page: action.page
-      }
-    case RECIEVE_REPOSITORIES:
-    case REQUEST_REPOSITORIES:
-      return {
-        ...state,
-        repositories: repositories(state.repositories, action)
-      }
-    case RECIEVE_COMMITS:
-    case REQUEST_COMMITS:
-      return {
-        ...state,
-        commits: commits(state.commits, action)
-      }
+      return _.set(_.lensProp('page'), action.page)(state)
+    case ADD_REPOSITORY:
+      return _.over(_.lensProp('repositories'), _.concat([action.repository]))(state)
+    case ADD_COMMIT:
+      return _.over(_.lensProp('commits'), _.concat(action.commit))(state)
     default:
       return state
   }
