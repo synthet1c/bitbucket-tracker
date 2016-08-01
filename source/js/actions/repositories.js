@@ -1,5 +1,6 @@
 import _ from 'ramda'
-import bitbucketInit, { repositories, commits } from '../bitbucket'
+import bitbucketInit, { repositories } from '../bitbucket'
+import { indexBy } from '../utils'
 
 bitbucketInit('andrewFountain', 'synthet1c')
 
@@ -26,13 +27,6 @@ export const selectRepository = (account, repository) => ({
   type: SELECT_REPOSITORY,
   account,
   repository
-})
-
-const indexBy = _.curry((key, arr) => {
-  return arr.reduce((acc, item) => {
-    acc[item[key]] = item
-    return acc
-  }, {})
 })
 
 export const RECIEVE_REPOSITORIES = 'RECIEVE_REPOSITORIES'

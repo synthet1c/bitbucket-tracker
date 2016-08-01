@@ -1,10 +1,12 @@
+import { indexBy } from '../utils'
+
 import {
   GET_REPOSITORIES,
   REQUEST_REPOSITORIES,
   RECIEVE_REPOSITORIES
 } from '../actions/repositories'
 
-export const repositories = (state = {
+export const repositoriesReducer = (state = {
   didInvalidate: false,
   isFetching: false,
   items: [],
@@ -24,6 +26,7 @@ export const repositories = (state = {
         didInvalidate: false,
         isFetching: false,
         items: action.repositories.values,
+        indexed: indexBy('name', action.repositories.values),
         lastUpdated: action.receivedAt,
         next: action.repositories.next,
         pageLen: action.repositories.pageLen,
@@ -32,3 +35,5 @@ export const repositories = (state = {
       return state
   }
 }
+
+export default repositoriesReducer
