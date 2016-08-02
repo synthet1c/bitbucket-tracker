@@ -1,32 +1,31 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import moment from 'moment'
-import { addRepository } from '../actions/repositories'
-import { fetchCommits } from '../actions/commits'
+import { addCommit, fetchCommits } from '../actions/commits'
 
 const timestamp = str => moment(str).format()
 const humanize = str => moment(str).from(moment(new Date))
 
-const RepositoryItem = ({
-  repository,
+const CommitItem = ({
+  commit,
   onCheckboxChange
 }) => {
   return (
     <div className="table__row">
       <div className="table__cell table__cell--checkbox">
         <input className="form__input"
-          onClick={e => onCheckboxChange(repository.name)}
+          onClick={e => onCheckboxChange(commit.message)}
           type="checkbox"
-          name={repository.name}
-          id={repository.name} />
+          name={commit.hash}
+          id={commit.message} />
       </div>
       <div className="table__cell table__cell--heading"
-        data-value={repository.name}>
-        <label htmlFor={repository.name}>{repository.name}</label>
+        data-value={commit.message}>
+        <label htmlFor={commit.hash}>{commit.message}</label>
       </div>
       <div className="table__cell table__cell--updated_at"
-        data-value={timestamp(repository.update_at)}>
-        {humanize(repository.updated_at)}
+        data-value={timestamp(commit.update_at)}>
+        {humanize(commit.updated_at)}
       </div>
     </div>
   )
@@ -34,18 +33,18 @@ const RepositoryItem = ({
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    frontend: state.frontend
+    frontend: state.frontend,
+    commits: state.entities.commits
   }
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   onCheckboxChange: name => {
-    dispatch(addRepository(name))
     dispatch(fetchCommits('bwiredintegration', name))
   }
 })
 
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(RepositoryItem)
+  mapStateToProps
+  // mapDispatchToProps
+)(CommitItem)

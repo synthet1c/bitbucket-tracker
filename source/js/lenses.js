@@ -10,6 +10,8 @@ export const next = _.lensProp('next')
 export const page = _.lensProp('page')
 export const pageLen = _.lensProp('pageLen')
 export const repository = _.lensProp('repository')
+export const timestamp = _.lensProp('timestamp')
+export const date = _.lensProp('date')
 
 export const set = {
   commits: _.set(commits),

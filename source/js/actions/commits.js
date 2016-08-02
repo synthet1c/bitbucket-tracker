@@ -26,12 +26,12 @@ export const getUserCommits = (account, user) => ({
 
 export const REQUEST_REPOSITORY_COMMITS = 'GET_REPOSITORY_COMMITS'
 export const requestRepositoryCommits = (account, repository) => ({
-  type: GET_REPOSITORY_COMMITS,
+  type: REQUEST_REPOSITORY_COMMITS,
   account,
   repository
 })
 
-export const RECIEVE_REPOSITORY_COMMITS = 'GET_REPOSITORY_COMMITS'
+export const RECIEVE_REPOSITORY_COMMITS = 'RECIEVE_REPOSITORY_COMMITS'
 export const recieveRepositoryCommits = (commits) => ({
   type: RECIEVE_REPOSITORY_COMMITS,
   commits
