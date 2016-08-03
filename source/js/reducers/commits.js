@@ -9,8 +9,10 @@ import {
   RECIEVE_REPOSITORY_COMMITS
 } from '../actions/commits'
 
+const trace = _.curry((name, x) => (console.log(name, x), x))
+
 const momentBefore = (a, b) => {
-  return a.date.isBefore(b.date)
+  return a.date.isBefore(b.date) ? 1 : -1
 }
 
 const sortByTimestamp = (arr) => {

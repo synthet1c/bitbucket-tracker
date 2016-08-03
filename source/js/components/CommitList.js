@@ -12,20 +12,21 @@ const CommitList = ({ commits }) => (
         <h3 className="table__heading">Commits</h3>
       </div>
       <div className="table__content">
-        <section className="table__table">
-          <div className="table__header">
-            <div className="table__row">
-              <div className="table__heading"></div>
-              <div className="table__heading">Commit</div>
-              <div className="table__heading">Last updated</div>
-            </div>
-          </div>
-          <div className="table__body">
+        <table className="table__table">
+          <thead className="table__header">
+            <tr className="table__row">
+              <th className="table__heading"></th>
+              <th className="table__heading">Commit</th>
+              <th className="table__heading">Repository</th>
+              <th className="table__heading">Last updated</th>
+            </tr>
+          </thead>
+          <tbody className="table__body">
             {commits.items.map(commit =>
               <CommitItem key={commit.hash} commit={commit} />
             )}
-          </div>
-        </section>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
