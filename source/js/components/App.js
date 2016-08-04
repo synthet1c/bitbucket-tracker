@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import RepositoryList from './RepositoryList'
 import CommitList from './CommitList'
 
+import '../../scss/main.scss'
+
 const App = ({ repositories }) => {
   return (
     <main className="main">

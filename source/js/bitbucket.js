@@ -51,12 +51,12 @@ export const myRepositories = (account) => {
   return query(url)
 }
 
-export const repositories = (account, repo) => {
+export const repositories = (account, repo, page = 1) => {
   console.log('moment', moment())
   const date = moment().day(1).format()
   console.log('moment', moment)
   const queryString = '' // encodeURIComponent(`updated_on=2016-07-25`)
-  const url = `https://api.bitbucket.org/2.0/repositories/${account}?sort=-updated_on`
+  const url = `https://api.bitbucket.org/2.0/repositories/${account}?sort=-updated_on&page=${page}`
   return query(url)
 }
 

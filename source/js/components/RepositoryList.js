@@ -1,9 +1,9 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import RepositoryItem from './RepositoryItem'
-import { addRepository } from '../actions/repositories'
+import { addRepository, fetchRepositories } from '../actions/repositories'
 
-const RepositoryList = ({ repositories }) => (
+const RepositoryList = ({ repositories, loadMore }) => (
   <div className="table table--repositories">
     <div className="table__inner">
       <div className="table__heading">
@@ -25,6 +25,12 @@ const RepositoryList = ({ repositories }) => (
           </tbody>
         </table>
       </div>
+      <div className="form__input">
+        <button className="form__button"
+          onClick={loadMore(repositories.name, repositories.page + 1)}>
+          load more
+        </button>
+      </div>
     </div>
   </div>
 )
@@ -36,6 +42,13 @@ const mapStateToProps = (state) => {
   }
 }
 
+const mapDispatchToProps = (dispatch, props) => ({
+  loadMore: (name, page) => () => {
+    dispatch(fetchRepositories('bwiredintegration', name, page))
+  }
+})
+
 export default connect(
-  mapStateToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(RepositoryList)

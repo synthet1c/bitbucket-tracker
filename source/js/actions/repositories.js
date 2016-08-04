@@ -13,16 +13,21 @@ export const addRepository = (repository) => {
 }
 
 export const REQUEST_REPOSITORIES = 'REQUEST_REPOSITORIES'
-
 export const requestRepositories = (account, repository) => ({
   type: REQUEST_REPOSITORIES,
   account,
   repository
 })
 
+export const LOAD_MORE_REPOSITORIES = 'LOAD_MORE_REPOSITORIES'
+export const loadMoreRepositories = (account, repository) => ({
+  type: LOAD_MORE_REPOSITORIES,
+  account,
+  repository
+})
+
 
 export const SELECT_REPOSITORY = 'SELECT_REPOSITORY'
-
 export const selectRepository = (account, repository) => ({
   type: SELECT_REPOSITORY,
   account,
@@ -30,7 +35,6 @@ export const selectRepository = (account, repository) => ({
 })
 
 export const RECIEVE_REPOSITORIES = 'RECIEVE_REPOSITORIES'
-
 export const recieveRepositories = (repositories) => ({
   type: RECIEVE_REPOSITORIES,
   repositories,
@@ -46,11 +50,11 @@ export const failedRepositoriesRequest = (error) => ({
   recievedAt: Date.now()
 })
 
-export const fetchRepositories = (account, repository) => (dispatch) => {
+export const fetchRepositories = (account, repository, page) => (dispatch) => {
 
   dispatch(requestRepositories(account, repository))
 
-  return repositories(account, repository)
+  return repositories(account, repository, page)
     .fork(
       error => dispatch(failedRepositoriesRequest(error)),
       response => dispatch(recieveRepositories(response))

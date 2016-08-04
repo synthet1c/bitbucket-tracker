@@ -11,6 +11,7 @@ export const repositoriesReducer = (state = {
   isFetching: false,
   items: [],
   next: null,
+  page: 1,
   pageLen: 0,
 }, action) => {
   switch (action.type) {
@@ -25,8 +26,9 @@ export const repositoriesReducer = (state = {
         ...state,
         didInvalidate: false,
         isFetching: false,
-        items: action.repositories.values,
+        items: state.items.concat(action.repositories.values),
         indexed: indexBy('name', action.repositories.values),
+        page: action.repositories.page,
         lastUpdated: action.receivedAt,
         next: action.repositories.next,
         pageLen: action.repositories.pageLen,
