@@ -31,6 +31,17 @@ module.exports = {
         exclude: /(node_modules|bower_components)/,
         loader: 'json'
       },
+      {
+        test: /\.scss$/,
+        include: /scss/,
+
+        loaders: [
+          'style',
+          'css',
+          'autoprefixer?browsers=last 3 versions',
+          'sass?outputStyle=expanded'
+         ]
+      },
     ]
   },
   plugins: [
