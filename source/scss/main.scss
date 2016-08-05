@@ -1,6 +1,124 @@
+html, body {
+  font-family: sans-serif;
+  width: 100%;
+  height: 100%;
+}
+
+@function ems($px) {
+  @return (16 / $px) * 1em
+}
+
+@mixin media($size: 'desk') {
+  $sizes: (
+    'desk': ems(1200),
+    'lap': ems(800),
+    'hand': ems(500)
+  );
+  $query: map-get($sizes, $size);
+  @media screen and (min-width: #{$query}) {
+    @content;
+  }
+}
+
 .main {
+
+  .main__inner {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+  }
+
   .main__header {
+    flex: 1;
     background: steelblue;
     padding: 1em;
+    min-width: 100%;
+  }
+
+  .main__content {
+    display: flex;
+    flex: 1;
+    min-width: 100%;
+    flex-direction: column;
+
+    @media('desk') {
+      flex-direction: row;
+    }
+  }
+}
+
+.table {
+  flex: 1;
+
+  &--repositories {
+    flex: 1;
+  }
+
+  &--commits {
+    flex: 3
+  }
+
+  .table__inner {
+    padding: 1em;
+  }
+
+  .table__cell {
+    padding: .5em 1em;
+
+    &--name span {
+      background: steelblue;
+      padding: .3em .7em;
+      color: white;
+      border-radius: .2em;
+    }
+  }
+}
+
+.collection {
+  flex: 1;
+
+  &--repositories {
+    flex: 1;
+  }
+
+  &--commits {
+    flex: 3
+  }
+
+  .collection__inner {
+    padding: 1em;
+  }
+
+  .collection__list {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .collection__item {
+    flex: 1;
+    display: flex;
+    align-content: space-between;
+    list-style-type: none;
+  }
+
+  .commit__cell {
+    flex: 1;
+    &--checkbox {
+      width: 40px;
+    }
+  }
+
+  .commit__cell {
+    padding: .5em 1em;
+
+    &--name span {
+      background: steelblue;
+      padding: .3em .7em;
+      color: white;
+      border-radius: .2em;
+    }
   }
 }

@@ -10,26 +10,32 @@ const CommitItem = ({
   commit
 }) => {
   return (
-    <tr className="table__row">
-      <td className="table__cell table__cell--checkbox">
+    <li className="collection__item commit">
+      <div className="commit__cell commit__cell--checkbox">
         <input className="form__input"
           type="checkbox"
           name={commit.hash}
           id={commit.message} />
-      </td>
-      <td className="table__cell table__cell--heading"
+      </div>
+      <div className="commit__cell commit__cell--heading"
         data-value={commit.message}>
         <label htmlFor={commit.hash}>{commit.message}</label>
-      </td>
-      <td className="table__cell table__cell--name"
+      </div>
+      <div className="commit__cell commit__cell--name"
         data-value="{commit.repository.name}">
-        {commit.repository.name}
-      </td>
-      <td className="table__cell table__cell--updated_at"
-        data-value={timestamp(commit.date)}>
-        {humanize(commit.date)}
-      </td>
-    </tr>
+        <span>
+          {commit.repository.name}
+        </span>
+      </div>
+      <div className="commit__cell commit__cell--day"
+        data-value={commit.date.format('dddd')}>
+        {commit.date.format('dddd')}
+      </div>
+      <div className="commit__cell commit__cell--updated_at"
+        data-value={commit.date.format('LT')}>
+        {commit.date.format('LT')}
+      </div>
+    </li>
   )
 }
 
