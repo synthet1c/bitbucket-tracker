@@ -6,13 +6,13 @@ import { addCommit } from '../actions/commits'
 const CommitList = ({ commits }) => (
   !commits
   ? null
-  : <div className="collection collection--commits">
-    <div className="collection__inner">
-      <div className="collection__heading">
-        <h3 className="collection__heading">Commits</h3>
+  : <div className="list list--commits">
+    <div className="list__inner">
+      <div className="list__heading">
+        <h3 className="list__heading">Commits</h3>
       </div>
-      <div className="collection__content">
-        <ul className="collection__list">
+      <div className="list__content">
+        <ul className="list__list">
           {commits.items.map(commit =>
             <CommitItem key={commit.hash} commit={commit} />
           )}

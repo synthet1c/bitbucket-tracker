@@ -9,32 +9,40 @@ const humanize = str => moment(str).format('dddd, MMMM Do, h:mm:ss a')
 const CommitItem = ({
   commit
 }) => {
+  const hash = commit.hash.slice(-7)
   return (
-    <li className="collection__item commit">
-      <div className="commit__cell commit__cell--checkbox">
-        <input className="form__input"
-          type="checkbox"
-          name={commit.hash}
-          id={commit.message} />
-      </div>
-      <div className="commit__cell commit__cell--heading"
-        data-value={commit.message}>
-        <label htmlFor={commit.hash}>{commit.message}</label>
-      </div>
-      <div className="commit__cell commit__cell--name"
-        data-value="{commit.repository.name}">
-        <span>
-          {commit.repository.name}
-        </span>
-      </div>
-      <div className="commit__cell commit__cell--day"
-        data-value={commit.date.format('dddd')}>
-        {commit.date.format('dddd')}
-      </div>
-      <div className="commit__cell commit__cell--updated_at"
-        data-value={commit.date.format('LT')}>
-        {commit.date.format('LT')}
-      </div>
+    <li className="list__item list__item--commit">
+      <input className="form__input commit__checkbox"
+        type="checkbox"
+        name={hash}
+        id={hash} />
+      <label className="commit" htmlFor={hash}>
+        <div className="commit__cell--index">
+          <span>{commit.hash.slice(-7)}</span>
+        </div>
+        <div className="commit__wrapper commit__wrapper--title">
+          <div className="commit__cell commit__cell--name"
+            data-value="{commit.repository.name}">
+            <span>
+              {commit.repository.name}
+            </span>
+          </div>
+          <div className="commit__cell commit__cell--heading"
+            data-value={commit.message}>
+            <span>{commit.message}</span>
+          </div>
+        </div>
+        <div className="commit__wrapper commit__wrapper--times">
+          <div className="commit__cell commit__cell--day"
+            data-value={commit.date.format('dddd')}>
+            {commit.date.format('dddd')}
+          </div>
+          <div className="commit__cell commit__cell--updated_at"
+            data-value={commit.date.format('LT')}>
+            {commit.date.format('LT')}
+          </div>
+        </div>
+      </label>
     </li>
   )
 }

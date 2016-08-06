@@ -5,7 +5,7 @@ html, body {
 }
 
 @function ems($px) {
-  @return (16 / $px) * 1em
+  @return $px + 0px
 }
 
 @mixin media($size: 'desk') {
@@ -42,13 +42,14 @@ html, body {
     min-width: 100%;
     flex-direction: column;
 
-    @media('desk') {
+    @include media('lap') {
       flex-direction: row;
     }
   }
 }
 
-.table {
+.table,
+.list {
   flex: 1;
 
   &--repositories {
@@ -75,7 +76,7 @@ html, body {
   }
 }
 
-.collection {
+.list {
   flex: 1;
 
   &--repositories {
@@ -86,28 +87,72 @@ html, body {
     flex: 3
   }
 
-  .collection__inner {
+  .list__inner {
     padding: 1em;
   }
 
-  .collection__list {
+  .list__list {
     padding: 0;
     margin: 0;
     display: flex;
     flex-direction: column;
   }
 
-  .collection__item {
+  .list__item {
     flex: 1;
     display: flex;
     align-content: space-between;
     list-style-type: none;
   }
 
-  .commit__cell {
+  .commit {
+    display: flex;
+    min-width: 100%;
+
+    border-bottom: 1px solid #eee;
+
+    &:hover {
+      background: #f7f7f7;
+    }
+  }
+
+  .commit__checkbox:checked ~ .commit {
+    background: #d1eaff;
+    border-bottom: 1px solid darken(#d1eaff, 5%);
+  }
+
+  .commit__wrapper {
     flex: 1;
+    padding: .5em 1em;
+
+    > .commit__cell {
+      padding: .2em;
+    }
+
+    &--title {
+      flex-grow: 4;
+    }
+
+    &--times {
+      flex-grow: 2;
+    }
+  }
+
+  .commit__checkbox {
+    visibility: hidden;
+    position: absolute;
+    opacity: 0;
+  }
+
+  .commit__cell {
+
+    &--index {
+      width: 70px;
+    }
+
+    &--index,
     &--checkbox {
-      width: 40px;
+      padding: .5em;
     }
   }
 
@@ -115,10 +160,8 @@ html, body {
     padding: .5em 1em;
 
     &--name span {
-      background: steelblue;
-      padding: .3em .7em;
-      color: white;
-      border-radius: .2em;
+      color: steelblue;
+      font-weight: bold;
     }
   }
 }
