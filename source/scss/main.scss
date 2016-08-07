@@ -65,7 +65,7 @@ html, body {
   }
 
   .table__cell {
-    padding: .5em 1em;
+    padding: .5em;
 
     &--name span {
       background: steelblue;
@@ -105,18 +105,27 @@ html, body {
     list-style-type: none;
   }
 
-  .commit {
-    display: flex;
-    min-width: 100%;
+  .list__button {
+    background: steelblue;
+    color: white;
+    width: 100%;
+    padding: 1em;
+    border: 1px solid darken(steelblue, 10%);
+  }
+}
 
-    border-bottom: 1px solid #eee;
+.commit {
+  display: flex;
+  min-width: 100%;
 
-    &:hover {
-      background: #f7f7f7;
-    }
+  border-bottom: 1px solid #eee;
+
+  &:hover {
+    background: #f7f7f7;
   }
 
-  .commit__checkbox:checked ~ .commit {
+  // active state
+  .commit__checkbox:checked ~ & {
     background: #d1eaff;
     border-bottom: 1px solid darken(#d1eaff, 5%);
   }
@@ -157,6 +166,68 @@ html, body {
   }
 
   .commit__cell {
+    padding: .5em 1em;
+
+    &--name span {
+      color: steelblue;
+      font-weight: bold;
+    }
+  }
+}
+
+.repository {
+  display: flex;
+  min-width: 100%;
+  cursor: pointer;
+
+  border-bottom: 1px solid #eee;
+
+  &:hover {
+    background: #f7f7f7;
+  }
+
+  // active state
+  &.active {
+    background: #d1eaff;
+    border-bottom: 1px solid darken(#d1eaff, 5%);
+  }
+
+  .repository__wrapper {
+    flex: 1;
+    padding: .5em 1em;
+
+    > .repository__cell {
+      padding: .2em;
+    }
+
+    &--title {
+      flex-grow: 4;
+    }
+
+    &--times {
+      flex-grow: 2;
+    }
+  }
+
+  .repository__checkbox {
+    visibility: hidden;
+    position: absolute;
+    opacity: 0;
+  }
+
+  .repository__cell {
+
+    &--index {
+      width: 70px;
+    }
+
+    &--index,
+    &--checkbox {
+      padding: .5em;
+    }
+  }
+
+  .repository__cell {
     padding: .5em 1em;
 
     &--name span {

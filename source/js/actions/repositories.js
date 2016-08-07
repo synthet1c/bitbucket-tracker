@@ -34,6 +34,12 @@ export const selectRepository = (account, repository) => ({
   repository
 })
 
+export const TOGGLE_REPOSITORY = 'TOGGLE_REPOSITORY'
+export const toggleRepository = (name) => ({
+  type: TOGGLE_REPOSITORY,
+  name
+})
+
 export const RECIEVE_REPOSITORIES = 'RECIEVE_REPOSITORIES'
 export const recieveRepositories = (repositories) => ({
   type: RECIEVE_REPOSITORIES,
@@ -41,6 +47,8 @@ export const recieveRepositories = (repositories) => ({
   indexed: indexBy('name', repositories.values),
   recievedAt: Date.now()
 })
+
+
 
 export const FAILED_REPOSITORIES_REQUEST = 'FAILED_REPOSITORIES_REQUEST'
 

@@ -1,5 +1,6 @@
 import _ from 'ramda'
 import * as lenses from '../lenses'
+import { indexBy } from '../utils'
 import moment from 'moment'
 
 import {
@@ -25,6 +26,23 @@ const filterByAuthor = _.curry((author, commit) => commit.author.raw.match(autho
 const addMoment = (commit) => _.set(lenses.date, moment(commit.date), commit)
 const reduceCommits = _.compose(_.map(addMoment), _.filter(filterByAuthor('andrewFountain')))
 
+// getHash :: {hash} -> String
+const getHash = _.compose(_.slice(-7, Infinity), _.prop('hash'))
+
+const mutateCommits = (obj, commits) => {
+  obj.hashes = {}
+  const items = []
+  for (let ii = 0, ll = commits.length; ii < ll; ii++) {
+    commits[ii].fullHash = commits[ii].hash
+    commits[ii].active = false
+    commits[ii].hash = commits[ii].hash.slice(-7)
+    obj.hashes[commits[ii].hash.slice(-7)] = commits[ii]
+    items[ii] = commits[ii]
+  }
+  obj.items = obj.items.concat(items)
+  return obj
+}
+
 export const commitsReducer = (state = {
   isFetching: false,
   didInvalidate: false,
@@ -40,12 +58,13 @@ export const commitsReducer = (state = {
       }
     case RECIEVE_REPOSITORY_COMMITS:
       const commits = reduceCommits(action.commits.values)
+      const items = sortByTimestamp(state.items.concat(commits))
       return {
         ...state,
         didInvalidate: false,
         isFetching: false,
-        items: sortByTimestamp(state.items.concat(commits)),
-        hashes: state.hashes.concat(commits.map(_.prop('hash'))),
+        items: items,
+        hashes: indexBy('hash', items),
         lastUpdated: action.receivedAt,
         next: action.commits.next,
         pageLen: action.commits.pageLen,

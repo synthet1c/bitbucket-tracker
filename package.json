@@ -29,6 +29,7 @@
     "babel-preset-stage-2": "^6.11.0",
     "baconjs": "^0.7.84",
     "bitbucketjs": "^1.0.2",
+    "classnames": "^2.2.5",
     "data.either": "^1.4.0",
     "data.maybe": "^1.2.2",
     "data.task": "^3.1.0",

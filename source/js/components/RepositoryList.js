@@ -4,29 +4,20 @@ import RepositoryItem from './RepositoryItem'
 import { addRepository, fetchRepositories } from '../actions/repositories'
 
 const RepositoryList = ({ repositories, loadMore }) => (
-  <div className="table table--repositories">
-    <div className="table__inner">
-      <div className="table__heading">
-        <h3 className="table__heading">Repositories</h3>
+  <div className="list list--repositories">
+    <div className="list__inner">
+      <div className="list__heading">
+        <h3 className="list__heading">Repositories</h3>
       </div>
-      <div className="table__content">
-        <table className="table__table">
-          <thead className="table__header">
-            <tr className="table__row">
-              <th className="table__heading"></th>
-              <th className="table__heading">Repository</th>
-              <th className="table__heading">Last updated</th>
-            </tr>
-          </thead>
-          <tbody className="table__body">
-            {repositories.items.map(repository =>
-              <RepositoryItem key={repository.uuid} repository={repository} />
-            )}
-          </tbody>
-        </table>
+      <div className="list__content">
+        <ul className="list__list">
+          {repositories.items.map(repository =>
+            <RepositoryItem key={repository.uuid} repository={repository} />
+          )}
+        </ul>
       </div>
-      <div className="form__input">
-        <button className="form__button"
+      <div className="list__cta">
+        <button className="list__button"
           onClick={loadMore(repositories.name, repositories.page + 1)}>
           load more
         </button>

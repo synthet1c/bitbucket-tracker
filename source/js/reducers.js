@@ -19,7 +19,8 @@ import {
   ADD_REPOSITORY,
   SELECT_REPOSITORY,
   REQUEST_REPOSITORIES,
-  RECIEVE_REPOSITORIES
+  RECIEVE_REPOSITORIES,
+  TOGGLE_REPOSITORY,
 } from './actions/repositories'
 
 const selectedRepository = (state = '', action) => {
@@ -53,6 +54,7 @@ const entities = (state = {}, action) => {
   switch (action.type) {
     case REQUEST_REPOSITORIES:
     case RECIEVE_REPOSITORIES:
+    case TOGGLE_REPOSITORY:
       return {
         ...state,
         repositories: repositoriesReducer(state.repositories, action)
