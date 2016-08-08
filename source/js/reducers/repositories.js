@@ -8,6 +8,10 @@ import {
   TOGGLE_REPOSITORY,
 } from '../actions/repositories'
 
+import {
+  RECIEVE_REPOSITORY_COMMITS
+} from '../actions/commits'
+
 const mutateRepositories = (obj, repositories) => {
   obj.items = []
   obj.names = {}
@@ -22,6 +26,20 @@ const mutateRepositories = (obj, repositories) => {
 const toggle = _.curry((name, prop, obj) => obj.name === name && (obj[prop] = !obj[prop]))
 const toggleItemActive = name => _.over(_.lensProp('items'), _.map(toggle('active', name)))
 
+const modifyRepository = _.curry((cb, action, state) => {
+  const setItem = (repository) => {
+    return repository.name === action.name
+      ? cb(action, repository)
+      : repository
+  }
+  return _.over(_.lensProp('items'), setItem, state)
+})
+
+const setRepositoryCommits = modifyRepository((action, repository) => ({
+  ...repository,
+  commits: repository.commits.concat(action.commits)
+}))
+
 export const repositoriesReducer = (state = {
   didInvalidate: false,
   isFetching: false,
@@ -34,7 +52,7 @@ export const repositoriesReducer = (state = {
     case REQUEST_REPOSITORIES:
       return {
         ...state,
-        isfetching: true,
+        isFetching: true,
         didInvalidate: false
       }
     case TOGGLE_REPOSITORY:
@@ -63,6 +81,9 @@ export const repositoriesReducer = (state = {
         next: action.repositories.next,
         pageLen: action.repositories.pageLen,
       }
+    case RECIEVE_REPOSITORY_COMMITS:
+      debugger
+      return setRepositoryCommits(action, state)
     default:
       return state
   }

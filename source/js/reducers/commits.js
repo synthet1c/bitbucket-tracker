@@ -43,10 +43,16 @@ const mutateCommits = (obj, commits) => {
   return obj
 }
 
+const addRepository = (state) => {
+
+}
+const indexRepository = _.over(_.lensProp('repositories'), addRepository )
+
 export const commitsReducer = (state = {
   isFetching: false,
   didInvalidate: false,
   items: [],
+  repositories: {},
   hashes: []
 }, action) => {
   switch (action.type) {

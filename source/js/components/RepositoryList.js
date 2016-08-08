@@ -17,9 +17,11 @@ const RepositoryList = ({ repositories, loadMore }) => (
         </ul>
       </div>
       <div className="list__cta">
-        <button className="list__button"
+        <button className="list__button button"
           onClick={loadMore(repositories.name, repositories.page + 1)}>
-          load more
+          {repositories.isFetching
+            ? <span className="icon icon--loader"></span>
+            : <span className="button__copy">Load more</span>}
         </button>
       </div>
     </div>
