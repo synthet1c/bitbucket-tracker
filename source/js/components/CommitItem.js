@@ -12,10 +12,6 @@ const CommitItem = ({
   const hash = commit.hash.slice(-7)
   return (
     <li className="list__item list__item--commit">
-      <input className="form__input commit__checkbox"
-        type="checkbox"
-        name={hash}
-        id={hash} />
       <label className="commit" htmlFor={hash}>
         <div className="commit__cell--index">
           <span>{commit.hash.slice(-7)}</span>

@@ -44,6 +44,9 @@ const RepositoryItem = ({
           data-value={repository.name}>
           <span>{repository.name}</span>
         </div>
+        <div className="repository__cell repository__cell--date">
+          <span>{humanize(repository.updated_on)}</span>
+        </div>
       </div>
     </li>
   )

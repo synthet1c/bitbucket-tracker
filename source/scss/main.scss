@@ -4,6 +4,8 @@ html, body {
   height: 100%;
 }
 
+$blue-steel: steelblue;
+
 @function ems($px) {
   @return $px + 0px
 }
@@ -105,13 +107,31 @@ html, body {
     list-style-type: none;
   }
 
+  .list__item--heading {
+    background: $blue-steel;
+    color: white;
+
+    .commit:hover {
+      background: $blue-steel;
+    }
+
+    .commit__cell--name span {
+      color: white;
+    }
+  }
+
   .list__button {
-    background: steelblue;
+    background: $blue-steel;
     color: white;
     width: 100%;
-    padding: 1em;
-    border: 1px solid darken(steelblue, 10%);
+    // padding: 1em;
+    border: 1px solid darken($blue-steel, 10%);
   }
+}
+
+.button__copy {
+  padding: 1em;
+  display: inline-block;
 }
 
 .commit {
@@ -209,21 +229,14 @@ html, body {
     }
   }
 
-  .repository__checkbox {
-    visibility: hidden;
-    position: absolute;
-    opacity: 0;
-  }
-
   .repository__cell {
 
-    &--index {
-      width: 70px;
+    padding: .5em;
+    &--heading {
+      flex: 1 1;
     }
-
-    &--index,
-    &--checkbox {
-      padding: .5em;
+    &--date {
+      min-width: 100px;
     }
   }
 
@@ -234,5 +247,16 @@ html, body {
       color: steelblue;
       font-weight: bold;
     }
+  }
+}
+
+.icon {
+  &--loader {
+    background-image: url('/dist/assets/balls.svg');
+    background-size: cover;
+    background-position: center;
+    width: 40px;
+    height: 40px;
+    display: inline-block;
   }
 }
