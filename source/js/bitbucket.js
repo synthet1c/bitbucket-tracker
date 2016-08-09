@@ -36,11 +36,6 @@ const query = (url) => {
   })
 }
 
-const serialize = (obj) => {
-  console.log(_.toPairs(obj))
-  // return _.toPairs(obj).map(param => param.join('=')).join('&')
-}
-
 export const commits = (account, repo) => {
   const url = `https://api.bitbucket.org/2.0/repositories/${account}/${repo}/commits?limit=50`
   return query(url)
@@ -57,9 +52,53 @@ export const repositories = (account, repo, page = 1) => {
   const date = moment().day(-7).format('YYYY-MM-DD')
   console.log('moment', moment)
   const aWeekAgo = new Date(new Date().setDate(new Date().getDay() - 7)).toISOString()
-  const params = 'updated_on+>+' + encodeURIComponent(date)
-  const url = `https://api.bitbucket.org/2.0/repositories/${account}?sort=-updated_on&page=${page}&q=${params}`
+  const params = serialize({
+    page: 1,
+    sort: '-updated_on',
+    q: {
+      updated_on: ['>', date]
+    }
+  })
+  const url = `https://api.bitbucket.org/2.0/repositories/${account}?${params}`
   return query(url)
 }
+
+const serialize = (params, encode = false) => {
+  let arr = []
+  let comparitor = '='
+  let value = ''
+  for (let key in params) {
+    if (key === 'q') {
+      arr.push('q=' + encodeURIComponent(serialize(params[key], true)))
+    } else {
+      if (Array.isArray(params[key])) {
+        comparitor = params[key][0]
+        value = params[key][1]
+      } else {
+        value = params[key]
+      }
+      value = encodeURIComponent(value)
+      if (encode) {
+        arr = arr.concat(`${key} ${comparitor} ${value}`)
+      } else {
+        arr = arr.concat(`${key}=${value}`)
+      }
+    }
+  }
+  if (encode) {
+    return arr
+  }
+  return '?' + arr.join('&')
+}
+
+export const exec = (url, params = {page: 1}) => e => {
+  const _params = {
+    page: 1,
+    updated_on: ['>', '2016-08-04']
+  }
+  return query(url + serializeParams(_params))
+}
+
+
 
 export default bitbucketInit

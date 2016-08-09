@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import moment from 'moment'
 import { addCommit, fetchCommits } from '../actions/commits'
+import * as bitbucket from '../bitbucket'
 
 const timestamp = str => moment(str).format()
 const humanize = str => moment(str).format('dddd, MMMM Do, h:mm:ss a')
@@ -19,7 +20,7 @@ const CommitItem = ({
         <div className="commit__wrapper commit__wrapper--title">
           <div className="commit__cell commit__cell--name"
             data-value="{commit.repository.name}">
-            <span>
+            <span onClick={bitbucket.exec(commit.links.comments.href)}>
               {commit.repository.name}
             </span>
           </div>
@@ -31,7 +32,7 @@ const CommitItem = ({
         <div className="commit__wrapper commit__wrapper--times">
           <div className="commit__cell commit__cell--day"
             data-value={commit.date.format('dddd')}>
-            {commit.date.format('dddd')}
+            {commit.date.format('dddd Do')}
           </div>
           <div className="commit__cell commit__cell--updated_at"
             data-value={commit.date.format('LT')}>

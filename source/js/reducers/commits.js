@@ -46,7 +46,22 @@ const mutateCommits = (obj, commits) => {
 const addRepository = (state) => {
 
 }
-const indexRepository = _.over(_.lensProp('repositories'), addRepository )
+
+const addCommitsByRepository = (repositories, commits) => {
+  return commits.reduce((repositories, commit) => {
+    const name = commit.repository.name
+    if (!Array.isArray(repositories[name])) {
+      repositories[name] = []
+    }
+    repositories[name] = repositories[name].concat(commit)
+    return repositories
+  }, repositories)
+}
+
+
+const clone = (obj) => ({...obj})
+const lensSelf = _.lens(_.identity, clone)
+const indexRepository = _.over(lensSelf, addRepository)
 
 export const commitsReducer = (state = {
   isFetching: false,
@@ -73,6 +88,7 @@ export const commitsReducer = (state = {
         hashes: indexBy('hash', items),
         lastUpdated: action.receivedAt,
         next: action.commits.next,
+        repositories: addCommitsByRepository(state.repositories, items),
         pageLen: action.commits.pageLen,
       }
     default:
