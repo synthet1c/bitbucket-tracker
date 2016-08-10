@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import moment from 'moment'
 import { addRepository, toggleRepository } from '../actions/repositories'
-import { fetchCommits } from '../actions/commits'
+import { fetchCommits, refreshCommits } from '../actions/commits'
 import _ from 'ramda'
 
 const trace = _.curry((name, x) => (console.log(name, x), x))
@@ -61,9 +61,10 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch, ownProps) => ({
   repositoryEvents: repository => ({
     onClick: e => {
-      dispatch(toggleRepository(repository.name))
       dispatch(addRepository(repository.name))
+      dispatch(toggleRepository(repository.name))
       dispatch(fetchCommits('bwiredintegration', repository.name))
+      dispatch(refreshCommits())
     }
   })
 })

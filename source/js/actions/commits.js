@@ -37,11 +37,28 @@ export const recieveRepositoryCommits = (commits) => ({
   commits
 })
 
+export const ADD_REPOSITORY_COMMIT = 'ADD_REPOSITORY_COMMIT'
+export const addRepositoryCommit = (repository) => ({
+  type: ADD_REPOSITORY_COMMITS,
+  repository
+})
+
+export const FILTER_REPOSITORY_COMMITS = 'FILTER_REPOSITORY_COMMITS'
+export const filterRepositoryCommits = (commits) => ({
+  type: FILTER_REPOSITORY_COMMITS,
+  commits
+})
+
 
 export const SELECT_COMMIT = 'SELECT_COMMIT'
 export const selectCommit = (commit) => ({
   type: SELECT_COMMIT,
   commit
+})
+
+export const REFRESH_COMMITS = 'REFRESH_COMMITS'
+export const refreshCommits = () => ({
+  type: REFRESH_COMMITS
 })
 
 export const fetchCommits = (account, repository) => (dispatch) => {

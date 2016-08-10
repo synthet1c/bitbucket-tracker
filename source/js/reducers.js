@@ -4,6 +4,7 @@ import { repositoriesReducer } from './reducers/repositories'
 import { commitsReducer } from './reducers/commits'
 import bitbucket from './bitbucket'
 import * as lenses from './lenses'
+import { arrayToggle, trace } from './utils'
 
 import { CHANGE_PAGE } from './actions/actions'
 
@@ -12,7 +13,8 @@ import {
   SELECT_COMMIT,
   REQUEST_REPOSITORY_COMMITS,
   RECIEVE_REPOSITORY_COMMITS,
-  LOAD_MORE_REPOSITORIES
+  LOAD_MORE_REPOSITORIES,
+  REFRESH_COMMITS,
 } from './actions/commits'
 
 import {
@@ -22,33 +24,6 @@ import {
   RECIEVE_REPOSITORIES,
   TOGGLE_REPOSITORY,
 } from './actions/repositories'
-
-const selectedRepository = (state = '', action) => {
-  switch (action.type) {
-    case SELECT_REPOSITORY:
-      return action.repository
-    default:
-      return state
-  }
-}
-
-const selectedCommit = (state = '', action) => {
-  switch (action.type) {
-    case SELECT_COMMIT:
-      return action.commit
-    default:
-      return state
-  }
-}
-
-const changePage = (state = '', action) => {
-  switch (action.type) {
-    case CHANGE_PAGE:
-      return action.page
-    default:
-      return state
-  }
-}
 
 const entities = (state = {}, action) => {
   switch (action.type) {
@@ -61,6 +36,7 @@ const entities = (state = {}, action) => {
       }
     case REQUEST_REPOSITORY_COMMITS:
     case RECIEVE_REPOSITORY_COMMITS:
+    case REFRESH_COMMITS:
       return {
         ...state,
         commits: commitsReducer(state.commits, action)
@@ -79,6 +55,8 @@ const frontend = (state = {
       return _.set(lenses.page, action.page)(state)
     case ADD_REPOSITORY:
       return _.over(lenses.repositories, _.concat([action.repository]))(state)
+    case TOGGLE_REPOSITORY:
+      return _.over(lenses.repositories, trace('lenses.repositories'))(state)
     case ADD_COMMIT:
       return _.over(lenses.commits, _.concat(action.commit))(state)
     default:
@@ -87,8 +65,6 @@ const frontend = (state = {
 }
 
 const rootReducer = combineReducers({
-  selectedRepository,
-  selectedCommit,
   frontend,
   entities
 })

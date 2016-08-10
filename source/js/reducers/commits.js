@@ -7,7 +7,9 @@ import {
   GET_COMMITS,
   GET_USER_COMMITS,
   REQUEST_REPOSITORY_COMMITS,
-  RECIEVE_REPOSITORY_COMMITS
+  RECIEVE_REPOSITORY_COMMITS,
+  FILTER_REPOSITORY_COMMITS,
+  REFRESH_COMMITS,
 } from '../actions/commits'
 
 const trace = _.curry((name, x) => (console.log(name, x), x))
@@ -71,13 +73,19 @@ export const commitsReducer = (state = {
   hashes: []
 }, action) => {
   switch (action.type) {
-    case REQUEST_REPOSITORY_COMMITS:
+    case REQUEST_REPOSITORY_COMMITS: {
       return {
         ...state,
         isFetching: true,
         didInvalidate: false,
       }
-    case RECIEVE_REPOSITORY_COMMITS:
+    }
+    case REFRESH_COMMITS: {
+      return {
+        ...state
+      }
+    }
+    case RECIEVE_REPOSITORY_COMMITS: {
       const commits = reduceCommits(action.commits.values)
       const items = sortByTimestamp(state.items.concat(commits))
       return {
@@ -91,6 +99,16 @@ export const commitsReducer = (state = {
         repositories: addCommitsByRepository(state.repositories, items),
         pageLen: action.commits.pageLen,
       }
+    }
+    case FILTER_REPOSITORY_COMMITS: {
+      const repositories = filterRepositories(action, state.repositories)
+      const items = sortByTimestamp(getRepositorCommits(repositories))
+      return {
+        ...state,
+        repositories,
+        items
+      }
+    }
     default:
       return state
   }

@@ -44,10 +44,17 @@ const CommitItem = ({
   )
 }
 
+const filterRepositoryCommits = (repositories, commits) => {
+  return commits.filter(commit => {
+    return repositories.includes(commit.repository.name)
+  })
+}
+
+
 const mapStateToProps = (state, ownProps) => {
   return {
     frontend: state.frontend,
-    commits: state.entities.commits
+    commits: filterRepositoryCommits(state.frontend.repositories, state.entities.commits.items)
   }
 }
 
