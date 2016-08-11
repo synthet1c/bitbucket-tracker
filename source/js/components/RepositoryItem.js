@@ -61,9 +61,9 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch, ownProps) => ({
   repositoryEvents: repository => ({
     onClick: e => {
-      dispatch(addRepository(repository.name))
-      dispatch(toggleRepository(repository.name))
       dispatch(fetchCommits('bwiredintegration', repository.name))
+      // dispatch(addRepository(repository.name))
+      dispatch(toggleRepository(repository.name))
       dispatch(refreshCommits())
     }
   })

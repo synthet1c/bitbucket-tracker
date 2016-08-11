@@ -8,11 +8,12 @@ export const indexBy = _.curry((key, arr) => {
 })
 
 export const arrayToggle = _.curry((item, arr) => {
+  debugger;
   let index
   if ((index = arr.indexOf(item) > -1)) {
     return [
-      ...state.repositories.slice(index, index + 1),
-      ...state.repositories.slice(index + 1)
+      ...arr.slice(index, index + 1),
+      ...arr.slice(index + 1)
     ]
   }
   return [...arr, item]

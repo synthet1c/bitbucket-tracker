@@ -56,7 +56,9 @@ const frontend = (state = {
     case ADD_REPOSITORY:
       return _.over(lenses.repositories, _.concat([action.repository]))(state)
     case TOGGLE_REPOSITORY:
-      return _.over(lenses.repositories, trace('lenses.repositories'))(state)
+      console.log(action)
+      const doAction = _.compose(trace('lenses.repositories'), arrayToggle(action.name))
+      return _.over(lenses.repositories, doAction)(state)
     case ADD_COMMIT:
       return _.over(lenses.commits, _.concat(action.commit))(state)
     default:
