@@ -7,6 +7,7 @@ import createLogger from 'redux-logger'
 import timesheetApp from './reducers'
 import App from './components/App'
 import actions from './actions.js'
+import './otherapp'
 
 const state = {
   selectedRepositiory: 'demo-b2bwatchescorednacom',
