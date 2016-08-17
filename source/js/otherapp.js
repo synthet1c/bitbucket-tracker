@@ -15,7 +15,7 @@ import _, {
 const reduceInternals = (internals, state, props, dispatch) => {
   return internals.reduce((acc, x) => ({
     ...acc,
-    ...x(state, props, dispatch)
+    ...x({ state, props, dispatch })
   }), {})
 }
 
@@ -31,15 +31,16 @@ const component = (...internals) => fn => state => {
   })
 }
 
-const defineEvents = (state, props, dispatch) => ({
+const defineEvents = ({ dispatch }) => ({
   clickEvent() {
     console.log('click')
     dispatch('DO_SOMETHING')
   }
 })
 
-const defineProps = (state, props) => ({
-  name: state.name
+const defineProps = ({ state }) => ({
+  name: state.name,
+  address: state.address
 })
 
 const Thing = ({
@@ -69,29 +70,35 @@ class State {
   }
 }
 
-const store = (initialValue = {}) => {
+const fluent = fn => function(...args) {
+  const ret = fn.apply(this, args)
+  return ret
+    ? ret
+    : this
+}
+
+const Store = (initialValue = {}) => {
+
   let state = new State(initialValue)
-  let actions = null
-  const listeners = []
+  let actions = {}
+  let listeners = []
+
   return {
-    listen(fn) {
+    listen: fluent((fn) => {
       listeners.push(fn)
-      return this
-    },
-    register(reducers) {
-      actions = reducers
-      return this
-    },
-    dispatch(action) {
+    }),
+    register: fluent((reducers) => {
+      actions = { ...reducers }
+    }),
+    dispatch: fluent((action) => {
       const newState = actions[action](state)
       listeners.forEach(fn => fn(newState.__value, action))
       state = newState
-      return this
-    }
+    })
   }
 }
 
-const stater = store({
+const stater = Store({
   name: 'andrew',
   age: 32,
   address: {
