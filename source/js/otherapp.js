@@ -84,17 +84,18 @@ const Store = (initialValue = {}) => {
   let listeners = []
 
   return {
-    listen: fluent((fn) => {
+    listen: fluent(fn => {
       listeners.push(fn)
     }),
-    register: fluent((reducers) => {
+    register: fluent(reducers => {
       actions = { ...reducers }
     }),
-    dispatch: fluent((action) => {
+    dispatch: fluent(action => {
       const newState = actions[action](state)
       listeners.forEach(fn => fn(newState.__value, action))
       state = newState
-    })
+    }),
+    getState: () => Object.freeze(state.__value)
   }
 }
 
@@ -105,6 +106,10 @@ const stater = Store({
     street: 'Pascoe Vale Rd'
   }
 })
+
+const log = (name, ...args) => {
+  console.log(...['%c ' + name + ' ', 'background:#3cf;color:#fff;font-weight:bold', ...args])
+}
 
 const define = (name, value) => window[name] = value || name
 const add = curry((a, b) => a + b)
@@ -129,7 +134,7 @@ const lens = curry((props, fn) => {
   return map(over(_lens, fn))
 })
 
-const set = curry((val, obj) => val)
+const set = curry((val, __) => val)
 
 const lenses = {}
 lenses.age = lens('age')
@@ -138,9 +143,10 @@ lenses.thing = lens('thing')
 
 lenses.address = lens('address')
 lenses.address.street = lens('address.street')
+lenses.address.number = lens('address.number')
 
 const actions = {
-  [BIRTHDAY]     : lens('age', add(1)),
+  [BIRTHDAY]     : lenses.age(add(1)),
   [REVERSE_NAME] : lenses.name(compose(upper, reverse)),
   [RESTORE_NAME] : lenses.name(compose(lower, reverse)),
   [LOWERCASE]    : lenses.address.street(lower),
@@ -152,21 +158,49 @@ actions
     lenses.name(upper),
     lenses.address.street(reverse),
     lenses.age(add(10)),
+    lenses.address.number(set(157))
   )
 
 console.log({ actions })
 
-stater
-  .register(actions)
-  .listen((state, action) => {
-    console.log({ action, state })
-  })
-  .dispatch(REVERSE_NAME)
-  .dispatch(BIRTHDAY)
-  .dispatch(RESTORE_NAME)
-  .dispatch(LOWERCASE)
-  .dispatch(PIPE)
-  .dispatch(SET)
+stater.register(actions)
+
+class Container extends React.Component {
+  constructor(props) {
+    super(props)
+    this.store = props.store
+    this.state = this.store.getState()
+    log('constructor', this.store)
+  }
+  componentDidMount() {
+    log('componentDidMount', this)
+    this.store.listen((state, action) => {
+      this.setState(state)
+      console.log({ action, state })
+    })
+  }
+  componentWillReceiveProps(nextProps) {
+    log('componentWillReceiveProps', this, nextProps)
+  }
+  componentWillUpdate() {
+    log('componentWillUpdate', this)
+  }
+  componentDidUpdate() {
+    log('componentDidUpdate', this)
+  }
+  componentWillUnmount() {
+    log('componentWillUnmount', this)
+  }
+  render() {
+    log('arguments', arguments)
+    return (
+      <div>
+        <span>{this.state.name}</span>
+        <Thingy />
+      </div>
+    )
+  }
+}
 
 const Thingy = component(
   defineEvents,
@@ -176,6 +210,35 @@ const Thingy = component(
 // const Thingy = component(Thing, props, events)(state)
 
 ReactDOM.render(
-  <Thingy />,
+  <Container store={stater} />,
   document.getElementById('thing')
 )
+
+const operations = [
+  REVERSE_NAME,
+  BIRTHDAY,
+  RESTORE_NAME,
+  LOWERCASE,
+  PIPE,
+  SET,
+]
+
+const timer = (operations) => {
+  let ii = 0
+  const go = () => {
+    stater.dispatch(operations[ii])
+    if (++ii < operations.length) {
+      setTimeout(go, 1000)
+    }
+  }
+  go()
+}
+timer(operations)
+
+// stater
+//   .dispatch(REVERSE_NAME)
+//   .dispatch(BIRTHDAY)
+//   .dispatch(RESTORE_NAME)
+//   .dispatch(LOWERCASE)
+//   .dispatch(PIPE)
+//   .dispatch(SET)
