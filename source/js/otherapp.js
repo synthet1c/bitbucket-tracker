@@ -19,43 +19,95 @@ const reduceInternals = (internals, state, props, dispatch) => {
   }), {})
 }
 
-const component = (...internals) => fn => state => {
-  const dispatch = (action) => {
-    console.log('dispatch', action)
+const diff = (left = {}, right = {}) => {
+  const leftKeys = Object.keys(left)
+  const rightKeys = Object.keys(right)
+  if (rightKeys.length !== rightKeys.length) {
+    return true
   }
+  if (Array.isArray(left) && Array.isArray(right)) {
+    return leftKeys.some((key) => {
+      return diff(left[key], right[key])
+    })
+  }
+  for (let ii = 0, ll = leftKeys.length; ii < ll; ii++) {
+    const leftKey = leftKeys[ii]
+    const rightKey = rightKeys[ii]
+    if (leftKey !== rightKey) {
+      return true
+    }
+    if (Array.isArray(left[leftKey])) {
+      return diff(left[leftKey], right[rightKey])
+    }
+    if (left[leftKey] !== right[rightKey]) {
+      return true
+    }
+  }
+  return false
+}
+
+const component = (...internals) => fn => store => {
   return React.createClass({
     displayName: fn.name,
-    render: function() {
-      return fn.call(this, reduceInternals(internals, state, this.props, dispatch))
+    componentDidMount() {
+      pinkLog('componentDidMount', this)
+      this.__state = store.getState()
     },
+    componentWillReceiveProps(nextProps) {
+      pinkLog('componentWillReceiveProps', this, nextProps)
+    },
+    shouldComponentUpdate() {
+      const shouldUpdate = diff(this.__state, store.getState())
+      pinkLog('shouldComponentUpdate', shouldUpdate)
+      return shouldUpdate
+    },
+    render() {
+      return fn.call(
+        this,
+        reduceInternals(
+          internals,
+          store.getState(),
+          this.props,
+          store.dispatch
+        )
+      )
+    }
   })
 }
 
 const defineEvents = ({ dispatch }) => ({
   clickEvent() {
     console.log('click')
-    dispatch('DO_SOMETHING')
+    dispatch(PIPE)
+    dispatch(FLIP_ITEMS)
   }
 })
 
 const defineProps = ({ state }) => ({
   name: state.name,
-  address: state.address
+  address: state.address,
+  items: state.items || [],
 })
 
 const Thing = ({
   name,
-  clickEvent
+  address,
+  items,
+  clickEvent,
 }) => {
+  const listItems = map(item => <li key={item}>{item}</li>)
+  blueLog('Thing', { name, clickEvent, address })
   return (
     <div className="thing">
-      <h3 onClick={clickEvent}>{name}</h3>
+      <h3 onClick={clickEvent}>
+        {name}
+      </h3>
+      <p>{address.street}</p>
+      <ul>
+        {listItems(items)}
+      </ul>
     </div>
   )
-}
-
-const state = {
-  name: 'andrew'
 }
 
 class State {
@@ -84,7 +136,7 @@ const Store = (initialValue = {}) => {
   let listeners = []
 
   return {
-    listen: fluent(fn => {
+    subscribe: fluent(fn => {
       listeners.push(fn)
     }),
     register: fluent(reducers => {
@@ -99,22 +151,27 @@ const Store = (initialValue = {}) => {
   }
 }
 
-const stater = Store({
+const store = Store({
   name: 'andrew',
   age: 32,
   address: {
     street: 'Pascoe Vale Rd'
-  }
+  },
+  items: ['one', 'two', 'three']
 })
 
-const log = (name, ...args) => {
-  console.log(...['%c ' + name + ' ', 'background:#3cf;color:#fff;font-weight:bold', ...args])
-}
+const log = curry((color, name, ...args) => {
+  console.log(...['%c ' + name + ' ', `background:${color};color:#fff;font-weight:bold`, ...args])
+})
+
+const blueLog = log('#3cf')
+const pinkLog = log('#f3c')
 
 const define = (name, value) => window[name] = value || name
 const add = curry((a, b) => a + b)
 const upper = str => str.toUpperCase()
 const lower = str => str.toLowerCase()
+const set = curry((val, __) => val)
 
 define('BIRTHDAY')
 define('REVERSE_NAME')
@@ -122,6 +179,7 @@ define('RESTORE_NAME')
 define('LOWERCASE')
 define('PIPE')
 define('SET')
+define('FLIP_ITEMS')
 
 const lens = curry((props, fn) => {
   if (typeof props === 'string') {
@@ -129,17 +187,16 @@ const lens = curry((props, fn) => {
   }
   const _lens = (props.length > 1)
     ? lensPath(props)
-    : lensProp(...props)
+    : lensProp(props[0])
 
   return map(over(_lens, fn))
 })
-
-const set = curry((val, __) => val)
 
 const lenses = {}
 lenses.age = lens('age')
 lenses.name = lens('name')
 lenses.thing = lens('thing')
+lenses.items = lens('items')
 
 lenses.address = lens('address')
 lenses.address.street = lens('address.street')
@@ -151,6 +208,7 @@ const actions = {
   [RESTORE_NAME] : lenses.name(compose(lower, reverse)),
   [LOWERCASE]    : lenses.address.street(lower),
   [SET]          : lenses.thing(set('thing')),
+  [FLIP_ITEMS]   : lenses.items(reverse),
 }
 
 actions
@@ -163,40 +221,38 @@ actions
 
 console.log({ actions })
 
-stater.register(actions)
+store.register(actions)
 
 class Container extends React.Component {
   constructor(props) {
     super(props)
     this.store = props.store
     this.state = this.store.getState()
-    log('constructor', this.store)
   }
   componentDidMount() {
-    log('componentDidMount', this)
-    this.store.listen((state, action) => {
+    blueLog('componentDidMount', this)
+    this.store.subscribe((state, action) => {
       this.setState(state)
-      console.log({ action, state })
+      blueLog('didMount', { action, state })
     })
   }
   componentWillReceiveProps(nextProps) {
-    log('componentWillReceiveProps', this, nextProps)
+    blueLog('componentWillReceiveProps', this, nextProps)
   }
-  componentWillUpdate() {
-    log('componentWillUpdate', this)
-  }
-  componentDidUpdate() {
-    log('componentDidUpdate', this)
-  }
-  componentWillUnmount() {
-    log('componentWillUnmount', this)
-  }
+  // componentWillUpdate() {
+  //   blueLog('componentWillUpdate', this)
+  // }
+  // componentDidUpdate() {
+  //   blueLog('componentDidUpdate', this)
+  // }
+  // componentWillUnmount() {
+  //   blueLog('componentWillUnmount', this)
+  // }
   render() {
-    log('arguments', arguments)
     return (
       <div>
         <span>{this.state.name}</span>
-        <Thingy />
+        <Thingy test={'test'}/>
       </div>
     )
   }
@@ -205,12 +261,12 @@ class Container extends React.Component {
 const Thingy = component(
   defineEvents,
   defineProps
-)(Thing)(state)
+)(Thing)(store)
 
 // const Thingy = component(Thing, props, events)(state)
 
 ReactDOM.render(
-  <Container store={stater} />,
+  <Container store={store} />,
   document.getElementById('thing')
 )
 
@@ -226,7 +282,7 @@ const operations = [
 const timer = (operations) => {
   let ii = 0
   const go = () => {
-    stater.dispatch(operations[ii])
+    store.dispatch(operations[ii])
     if (++ii < operations.length) {
       setTimeout(go, 1000)
     }
@@ -235,7 +291,7 @@ const timer = (operations) => {
 }
 timer(operations)
 
-// stater
+// store
 //   .dispatch(REVERSE_NAME)
 //   .dispatch(BIRTHDAY)
 //   .dispatch(RESTORE_NAME)
