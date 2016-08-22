@@ -75,11 +75,15 @@ const component = (...internals) => fn => store => {
   })
 }
 
+const randomNumber = () => Math.ceil(Math.random() * 12 - 6)
+
 const defineEvents = ({ dispatch }) => ({
-  clickEvent() {
-    console.log('click')
-    dispatch(PIPE)
+  clickHeader() {
+    dispatch(PIPE, { age: randomNumber(), number: 666 })
     dispatch(FLIP_ITEMS)
+  },
+  clickAge() {
+    dispatch(CHANGE_WITH_PROPS, { age: 40 })
   }
 })
 
@@ -87,24 +91,30 @@ const defineProps = ({ state }) => ({
   name: state.name,
   address: state.address,
   items: state.items || [],
+  age: state.age,
 })
 
 const Thing = ({
   name,
+  age,
   address,
   items,
-  clickEvent,
+  clickHeader,
+  clickAge,
 }) => {
-  const listItems = map(item => <li key={item}>{item}</li>)
-  blueLog('Thing', { name, clickEvent, address })
+  const li = map(item =>
+    <li className='list__item' key={item}>{item}</li>
+  )
+  blueLog('Thing', { name, clickHeader, address })
   return (
     <div className="thing">
-      <h3 onClick={clickEvent}>
+      <h3 onClick={clickHeader}>
         {name}
       </h3>
+      <p onClick={clickAge}>{age}</p>
       <p>{address.street}</p>
-      <ul>
-        {listItems(items)}
+      <ul className='list'>
+        {li(items)}
       </ul>
     </div>
   )
@@ -142,8 +152,11 @@ const Store = (initialValue = {}) => {
     register: fluent(reducers => {
       actions = { ...reducers }
     }),
-    dispatch: fluent(action => {
-      const newState = actions[action](state)
+    dispatch: fluent((action, ...rest ) => {
+      const newState = (rest.length)
+        ? actions[action](...rest)(state)
+        : actions[action](state)
+
       listeners.forEach(fn => fn(newState.__value, action))
       state = newState
     }),
@@ -151,17 +164,8 @@ const Store = (initialValue = {}) => {
   }
 }
 
-const store = Store({
-  name: 'andrew',
-  age: 32,
-  address: {
-    street: 'Pascoe Vale Rd'
-  },
-  items: ['one', 'two', 'three']
-})
-
 const log = curry((color, name, ...args) => {
-  console.log(...['%c ' + name + ' ', `background:${color};color:#fff;font-weight:bold`, ...args])
+  console.log(`%c ${name}`, `background:${color};color:#fff;font-weight:bold`, ...args)
 })
 
 const blueLog = log('#3cf')
@@ -180,6 +184,7 @@ define('LOWERCASE')
 define('PIPE')
 define('SET')
 define('FLIP_ITEMS')
+define('CHANGE_WITH_PROPS')
 
 const lens = curry((props, fn) => {
   if (typeof props === 'string') {
@@ -209,17 +214,23 @@ const actions = {
   [LOWERCASE]    : lenses.address.street(lower),
   [SET]          : lenses.thing(set('thing')),
   [FLIP_ITEMS]   : lenses.items(reverse),
-}
-
-actions
-  [PIPE] = pipe(
+  [PIPE]         : ({ age, number }) => pipe(
     lenses.name(upper),
     lenses.address.street(reverse),
-    lenses.age(add(10)),
-    lenses.address.number(set(157))
-  )
+    lenses.age(add(age)),
+    lenses.address.number(set(number))
+  ),
+  [CHANGE_WITH_PROPS] : ({ age }) => lenses.age(set(age))
+}
 
-console.log({ actions })
+const store = Store({
+  name: 'andrew',
+  age: 32,
+  address: {
+    street: 'Pascoe Vale Rd'
+  },
+  items: ['one', 'two', 'three']
+})
 
 store.register(actions)
 
@@ -230,13 +241,13 @@ class Container extends React.Component {
     this.state = this.store.getState()
   }
   componentDidMount() {
-    blueLog('componentDidMount', this)
     this.store.subscribe((state, action) => {
       this.setState(state)
       blueLog('didMount', { action, state })
     })
   }
   componentWillReceiveProps(nextProps) {
+    debugger
     blueLog('componentWillReceiveProps', this, nextProps)
   }
   // componentWillUpdate() {
@@ -275,7 +286,7 @@ const operations = [
   BIRTHDAY,
   RESTORE_NAME,
   LOWERCASE,
-  PIPE,
+  // PIPE,
   SET,
 ]
 
