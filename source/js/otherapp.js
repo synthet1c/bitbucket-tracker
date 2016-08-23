@@ -1,6 +1,7 @@
 'use strict'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { classNames } from 'utils'
 import _, {
   map,
   compose,
@@ -94,6 +95,10 @@ const defineProps = ({ state }) => ({
   age: state.age,
 })
 
+const classy = (...classes) => {
+
+}
+
 const Thing = ({
   name,
   age,
@@ -102,10 +107,6 @@ const Thing = ({
   clickHeader,
   clickAge,
 }) => {
-  const li = map(item =>
-    <li className='list__item' key={item}>{item}</li>
-  )
-  blueLog('Thing', { name, clickHeader, address })
   return (
     <div className="thing">
       <h3 onClick={clickHeader}>
@@ -114,7 +115,11 @@ const Thing = ({
       <p onClick={clickAge}>{age}</p>
       <p>{address.street}</p>
       <ul className='list'>
-        {li(items)}
+        {map(item =>
+          <li {...classNames('list__item')} key={item.key}>
+            <span className='list__copy'>{item.name}</span>
+          </li>
+        )(items)}
       </ul>
     </div>
   )
@@ -165,7 +170,7 @@ const Store = (initialValue = {}) => {
 }
 
 const log = curry((color, name, ...args) => {
-  console.log(`%c ${name}`, `background:${color};color:#fff;font-weight:bold`, ...args)
+  console.log(`%c ${name} `, `background:${color};color:#fff;font-weight:bold`, ...args)
 })
 
 const blueLog = log('#3cf')
@@ -229,7 +234,11 @@ const store = Store({
   address: {
     street: 'Pascoe Vale Rd'
   },
-  items: ['one', 'two', 'three']
+  items: [
+    { key: 1, name: 'one', active: false },
+    { key: 2, name: 'two', active: true },
+    { key: 3, name: 'three', active: false },
+  ]
 })
 
 store.register(actions)

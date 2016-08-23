@@ -45,7 +45,7 @@ export const repositoriesReducer = (state = {
   isFetching: false,
   items: [],
   next: null,
-  page: 1,
+  page: 0,
   pageLen: 0,
 }, action) => {
   switch (action.type) {
@@ -53,7 +53,7 @@ export const repositoriesReducer = (state = {
       return {
         ...state,
         isFetching: true,
-        didInvalidate: false
+        didInvalidate: false,
       }
     case TOGGLE_REPOSITORY:
       // return toggleItemActive(action.name, state)

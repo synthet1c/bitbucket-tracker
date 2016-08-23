@@ -1,4 +1,5 @@
 const webpack = require('webpack')
+const path = require('path')
 
 module.exports = {
   context: __dirname,
@@ -7,6 +8,10 @@ module.exports = {
     path: './dist',
     filename: 'app.bundle.js',
     publicPath: '/dist/'
+  },
+  resolve: {
+    root: path.resolve('./source/js'),
+    extensions: ['', '.js']
   },
   devtool: 'source-map',
   devServer: {

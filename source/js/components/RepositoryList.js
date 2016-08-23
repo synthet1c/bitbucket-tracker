@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import RepositoryItem from './RepositoryItem'
 import { addRepository, fetchRepositories } from '../actions/repositories'
-
+let key = 0
 const RepositoryList = ({ repositories, loadMore }) => (
   <div className="list list--repositories">
     <div className="list__inner">
@@ -12,7 +12,7 @@ const RepositoryList = ({ repositories, loadMore }) => (
       <div className="list__content">
         <ul className="list__list">
           {repositories.items.map(repository =>
-            <RepositoryItem key={repository.uuid} repository={repository} />
+            <RepositoryItem key={key++} repository={repository} />
           )}
         </ul>
       </div>

@@ -4,29 +4,11 @@ import moment from 'moment'
 import { addRepository, toggleRepository } from '../actions/repositories'
 import { fetchCommits, refreshCommits } from '../actions/commits'
 import _ from 'ramda'
+import { classNames } from '../utils'
 
 const trace = _.curry((name, x) => (console.log(name, x), x))
 const timestamp = str => moment(str).format()
 const humanize = str => moment(str).fromNow()
-
-const classNames = (...classes) => {
-
-  const className = classes.reduce((acc, clazz) => {
-    if (typeof clazz === 'string' || Array.isArray(clazz)) {
-      return acc.concat(clazz)
-    }
-    for (let key in clazz) {
-      if (clazz[key]) {
-        acc = acc.concat(key)
-      }
-    }
-    return acc
-  }, []).join(' ')
-
-  return {
-    className
-  }
-}
 
 const RepositoryItem = ({
   repository,

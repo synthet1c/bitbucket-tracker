@@ -53,13 +53,13 @@ export const repositories = (account, repo, page = 1) => {
   console.log('moment', moment)
   const aWeekAgo = new Date(new Date().setDate(new Date().getDay() - 7)).toISOString()
   const params = serialize({
-    page: 1,
+    page,
     sort: '-updated_on',
     q: {
       updated_on: ['>', date]
     }
   })
-  const url = `https://api.bitbucket.org/2.0/repositories/${account}?${params}`
+  const url = `https://api.bitbucket.org/2.0/repositories/${account}${params}`
   return query(url)
 }
 

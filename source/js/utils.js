@@ -8,7 +8,6 @@ export const indexBy = _.curry((key, arr) => {
 })
 
 export const arrayToggle = _.curry((item, arr) => {
-  debugger;
   let index
   if ((index = arr.indexOf(item) > -1)) {
     return [
@@ -20,3 +19,22 @@ export const arrayToggle = _.curry((item, arr) => {
 })
 
 export const trace = name => x => (console.log(name, x), x)
+
+export const classNames = (...classes) => {
+
+  const className = classes.reduce((acc, clazz) => {
+    if (typeof clazz === 'string' || Array.isArray(clazz)) {
+      return acc.concat(clazz)
+    }
+    for (let key in clazz) {
+      if (clazz[key]) {
+        acc = acc.concat(key)
+      }
+    }
+    return acc
+  }, []).join(' ')
+
+  return {
+    className
+  }
+}
