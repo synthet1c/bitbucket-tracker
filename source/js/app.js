@@ -8,6 +8,7 @@ import timesheetApp from './reducers'
 import App from './components/App'
 import actions from './actions.js'
 import './otherapp'
+import './toggl'
 
 const state = {
   selectedRepositiory: 'demo-b2bwatchescorednacom',
