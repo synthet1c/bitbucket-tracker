@@ -6,3 +6,11 @@ export const indexBy = _.curry((key, arr) => {
     return acc
   }, {})
 })
+
+export const parameterize = obj => {
+  const arr = []
+  for (let key in obj) {
+    arr.push(key + '=' + obj[key])
+  }
+  return arr.join('&')
+}
