@@ -1,9 +1,10 @@
-const query = (uri) => {
+const makeRequest = (method = 'GET') => (uri, data = {}) => {
   return new Promise((resolve,reject) => {
     const xhr = new XMLHttpRequest()
-    xhr.open("GET", 'https://www.toggl.com/api/v8' + uri, true)
+    xhr.open(method, 'https://www.toggl.com/api/v8' + uri, true)
     xhr.setRequestHeader('Authorization', 'Basic '+ btoa("ef689c80ab1d8dfb7b3a22288812b567:api_token"))
-    xhr.onreadystatechange = function(){
+    xhr.setRequestHeader('Content-type', 'application/json')
+    xhr.onreadystatechange = function() {
       if (xhr.readyState === 4) {
         if (xhr.status === 200) {
           resolve(JSON.parse(xhr.responseText))
@@ -12,11 +13,11 @@ const query = (uri) => {
         }
       }
     }
-    xhr.send()
+    xhr.send(JSON.stringify(data))
   })
 }
 
-const makeRequest = method => (uri, data) => {
+const makeFetch = method => (uri, data) => {
   const request = new Request('https://www.toggl.com/api/v8' + uri, {
     method: 'POST',
     mode: 'cors',
@@ -28,33 +29,25 @@ const makeRequest = method => (uri, data) => {
     }),
     data: JSON.stringify(data)
   })
-  return fetch(request)
-    .then((response) => response.json())
+
+  const init = {
+    method: 'POST',
+    mode: 'cors',
+    redirect: 'follow',
+    cache: 'no-cache',
+    headers: new Headers({
+      'Content-Type': 'application/json',
+      'Authorization': 'Basic ' + btoa('ef689c80ab1d8dfb7b3a22288812b567:api_token')
+    }),
+    data: JSON.stringify(data)
+  }
+  return fetch('https://www.toggl.com/api/v8' + uri, init)
     .then(trace('fetch'))
+    .then((response) => response.json())
 }
 
+const query = makeRequest('GET')
 const post = makeRequest('POST')
-
-
-
-// const post = (uri, data) => {
-//   return new Promise((resolve,reject) => {
-//     const xhr = new XMLHttpRequest()
-//     xhr.open("POST", 'https://www.toggl.com/api/v8' + uri, true)
-//     xhr.setRequestHeader('Authorization', 'Basic '+ btoa("ef689c80ab1d8dfb7b3a22288812b567:api_token"))
-//     xhr.setRequestHeader('Content-type', 'application/json');
-//     xhr.onreadystatechange = function(){
-//       if (xhr.readyState === 4) {
-//         if (xhr.status === 200) {
-//           resolve(JSON.parse(xhr.responseText))
-//         } else {
-//           reject({ error: xhr.responseText })
-//         }
-//       }
-//     }
-//     xhr.send(JSON.stringify(data))
-//   })
-// }
 
 const getProject = () => query('/project')
 
@@ -112,6 +105,19 @@ const addClient = db => client => {
   }
 }
 
+const getClientEntries = db => name => {
+  const client = db.clients[db.clientNames[name]]
+  const projects = []
+  for (let key in db.projects) {
+    if (db.projects[key].cid && db.projects[key].cid === client.id) {
+      projects.push(db.projects[key])
+    }
+  }
+  return projects.reduce((acc, project) => {
+    return acc.concat(getProjectEntries(db)(project.name))
+  }, [])
+}
+
 const setNames = db => projects => {
   db.names = projects.reduce((acc, project) => (acc[project.name] = project.id, acc), {})
 }
@@ -145,15 +151,18 @@ const setEntries = db => entries => {
 const getByTimestamp = db => () => {
   return db.timestamp.map(({ id, pid }) => {
     const entry = db.entries[id]
-    const project = (db.projects[pid] && db.projects[pid].name) || null
-    const client = db.clients[project.cid] || null
+    const project = db.projects[pid]
+    const client = project && db.clients[project.cid]
+    const projectName = (project && project.name) || null
+    const clientName = (client && client.name) || null
     return {
       description: entry.description,
       duration: entry.duration,
+      durationHours: roundMinutes(entry.duration),
       start: entry.start,
       stop: entry.stop,
-      project,
-      client
+      project: projectName,
+      client: clientName,
     }
   })
 }
@@ -172,11 +181,11 @@ const getProjectEntries = db => name => {
 const roundMinutes = (seconds) => {
   const hours = seconds / 60 / 60
 
-  return (Math.round(hours * 4) / 4).toFixed(2);
+  return (Math.round(hours * 4) / 4).toFixed(2)
 }
 
-console.log('roundMinutes', roundMinutes(4601))
-console.log('roundMinutes', roundMinutes(3770))
+console.log('roundMinutes', roundMinutes(6801))
+console.log('roundMinutes', roundMinutes(3600))
 
 const getEntryProject = db => entry => db.projects[entry.pid]
 
@@ -190,6 +199,7 @@ const DB = schema => {
     setProjects: setProjects(db),
     setClients: setClients(db),
     addClient: addClient(db),
+    getClientEntries: getClientEntries(db),
     setNames: setNames(db),
     getDB: () => db,
     save: () => store('toggl', db),
@@ -225,6 +235,8 @@ export const initProjects = () => {
     db.setProjects(projects)
     db.setNames(projects)
     db.setCurrent(current)
+    log('getClientEntries', db.getClientEntries('bwiredcomau'))
+    log('getByTimestamp', db.getByTimestamp())
     store('toggl', db.getDB())
   })
 }
@@ -249,7 +261,7 @@ export const createProject = (project) => {
 }
 
 createProject({
-  name: 'aab'
+  name: 'aae'
 })
 
 export const createClient = client => {
