@@ -9,6 +9,10 @@ export const setProjects = db => projects => {
   })
 }
 
+// getProject :: _ -> Promise(project)
+export const getProject = () => query('/project')
+
+
 // addProject :: {db} -> {project} -> void
 export const addProject = db => project => {
   if (!project.error) {

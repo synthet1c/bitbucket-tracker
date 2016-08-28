@@ -1,5 +1,19 @@
-import * as projects from './projects'
-import * as clients from './clients'
+import {
+  getProjectEntries,
+  setProjects,
+} from './projects'
+
+import {
+
+} from './entries'
+
+import {
+  setClients,
+  getClient,
+  addClient,
+  getClientEntries,
+} from './clients'
+
 import {
   makeRequest,
   log,
@@ -9,16 +23,7 @@ import {
   prop,
 } from './utils'
 
-export const query = makeRequest('GET')
-export const post = makeRequest('POST')
-
-export const getProject = () => query('/project')
-
 export const store = (key, value) => localStorage.setItem(key, JSON.stringify(value))
-
-
-
-
 
 export const saveEntries = db => store('toggl', db)
 

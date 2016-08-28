@@ -25,7 +25,7 @@ const roundMinutes = (seconds) => {
   return (Math.round(hours * 4) / 4).toFixed(2)
 }
 
-// makeRequest :: String -> (String, Object) -> Promise(xhr)
+// makeRequest :: String -> (String, Object) -> Promise(xhr.response)
 export const makeRequest = (method = 'GET') => (uri, data = {}) => {
   return new Promise((resolve,reject) => {
     const xhr = new XMLHttpRequest()
@@ -44,3 +44,9 @@ export const makeRequest = (method = 'GET') => (uri, data = {}) => {
     xhr.send(JSON.stringify(data))
   })
 }
+
+// query :: (String, Object) -> Promise(xhr.response)
+export const query = makeRequest('GET')
+
+// post :: (String, Object) -> Promise(xhr.response)
+export const post = makeRequest('POST')
