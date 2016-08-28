@@ -97,6 +97,11 @@ const setClients = db => clients => {
   db.clients = clients.reduce(indexBy('id'), {})
 }
 
+const getClient = db => client => {
+  const cid = db.clientNames[client]
+  return db.clients[cid]
+}
+
 const addClient = db => client => {
   if (!client.error) {
     db.clients[client.data.id] = client.data
@@ -198,6 +203,7 @@ const DB = schema => {
     setCurrent: setCurrent(db),
     setProjects: setProjects(db),
     setClients: setClients(db),
+    getClient: getClient(db),
     addClient: addClient(db),
     getClientEntries: getClientEntries(db),
     setNames: setNames(db),
@@ -260,9 +266,9 @@ export const createProject = (project) => {
   .then(trace('project created: ' + project.name))
 }
 
-createProject({
-  name: 'aae'
-})
+// createProject({
+//   name: 'aae'
+// })
 
 export const createClient = client => {
   if (!client.name) {
@@ -278,6 +284,25 @@ export const createClient = client => {
   .then(trace('created client: ' + client.name))
 }
 
-// createClient({
-//   name: 'another-7'
-// })
+const createOrGetClient = (client) => {
+  const execRequest = () => {
+    let savedClient = null
+    if ((savedClient = db.getClient(client.name))) {
+      return new Promise((resolve,_) => resolve(savedClient))
+    }
+    const clientObj = {
+      client: Object.assign({}, {
+        wid: 1016808
+      }, client)
+    }
+    return post('/clients', clientObj)
+      .catch(traceError('client creation failed: ' + client.name))
+      .then(response => response.data)
+  }
+  return execRequest()
+    .then(trace('createOrGetClient'))
+}
+
+createOrGetClient({
+  name: 'another-14'
+})
