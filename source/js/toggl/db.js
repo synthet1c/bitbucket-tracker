@@ -62,10 +62,10 @@ const DB = schema => {
       setClients,
       getClient,
       addClient,
+      setNames,
+      getByTimestamp,
       getClientEntries,
       createOrGetClient,
-      setNames,
-      getByTimestamp
     )(db)
   )
 }
@@ -91,22 +91,26 @@ export const initProjects = () => {
     query('/workspaces/1016808/projects'),
     query('/clients'),
   ])
-  .then(trace('toggl'))
+  .then((args) => {
+    const [ timeEntries, current, projects, clients ] = args
+    log('toggl', { timeEntries, current, projects, clients })
+    return args
+  })
   .then(([ timeEntries, current, projects, clients ]) => {
     db.setEntries(timeEntries)
     db.setClients(clients)
     db.setProjects(projects)
     db.setNames(projects)
     db.setCurrent(current)
-    log('getClientEntries', db.getClientEntries('bwiredcomau'))
-    log('getByTimestamp', db.getByTimestamp())
     store('toggl', db.getDB())
   })
 }
 
 initProjects()
   .then(() => {
-    console.log('inited')
+    log('getClientEntries', db.getClientEntries('bwiredcomau'))
+    log('getByTimestamp', db.getByTimestamp())
+    db.createOrGetClient({ name: 'another-11' })
   })
 
 // createProject({
@@ -114,5 +118,3 @@ initProjects()
 // })
 
 console.log('dbee', db)
-
-db.createOrGetClient({ name: 'another-16' })

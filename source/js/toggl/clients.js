@@ -56,11 +56,11 @@ export const getClientEntries = db => name => {
   }, [])
 }
 
-// createOrGetClient :: {client} -> Promise(client)
-export const createOrGetClient = (client) => {
+// createOrGetClient :: _ -> {client} -> Promise(client)
+export const createOrGetClient = db => client => {
   const execRequest = () => {
     let savedClient = null
-    if ((savedClient = db.getClient(client.name))) {
+    if ((savedClient = getClient(db)(client.name))) {
       return new Promise((resolve,_) => resolve(savedClient))
     }
     const clientObj = {
