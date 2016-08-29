@@ -7,6 +7,7 @@ export const indexBy = _.curry((key, arr) => {
   }, {})
 })
 
+// parameterize :: Object -> String
 export const parameterize = obj => {
   const arr = []
   for (let key in obj) {

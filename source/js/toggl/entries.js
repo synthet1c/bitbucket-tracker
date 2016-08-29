@@ -25,7 +25,7 @@ export const getEntryProject = db => entry => db.projects[entry.pid]
 
 
 // setCurrent :: {db} -> {entry} -> void
-const setCurrent = db => entry => {
+export const setCurrent = db => entry => {
   if (entry.data) {
     db.current = Object.assign({}, entry.data, {
       project: entry.data && entry.data.pid
@@ -39,7 +39,7 @@ const setCurrent = db => entry => {
 
 
 // setEntries :: {db} -> [...entry] -> [...entry]
-const setEntries = db => entries => {
+export const setEntries = db => entries => {
   // set by timestamp
   db.timestamp = entries.map(entry => ({
     pid: entry.pid,

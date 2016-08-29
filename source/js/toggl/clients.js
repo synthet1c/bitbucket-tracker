@@ -43,7 +43,7 @@ export const createClient = client => {
 }
 
 // getClientEntries :: {db} -> String -> [...project]
-const getClientEntries = db => name => {
+export const getClientEntries = db => name => {
   const client = db.clients[db.clientNames[name]]
   const projects = []
   for (let key in db.projects) {

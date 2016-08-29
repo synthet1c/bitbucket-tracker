@@ -20,7 +20,7 @@ export const prop = name => obj => obj[name]
 export const indexBy = prop => (acc, x) => (acc[x[prop]] = x, acc)
 
 // roundMinutes :: Int -> String
-const roundMinutes = (seconds) => {
+export const roundMinutes = seconds => {
   const hours = seconds / 60 / 60
   return (Math.round(hours * 4) / 4).toFixed(2)
 }
@@ -50,3 +50,11 @@ export const query = makeRequest('GET')
 
 // post :: (String, Object) -> Promise(xhr.response)
 export const post = makeRequest('POST')
+
+// mixin :: [...Object] -> Object -> Object
+// mixin functions
+export const mixin = (...fns) => self => {
+  return fns.reduce((acc, fn) => {
+    return Object.assign(acc, {[fn.name]: fn(self)})
+  }, {})
+}

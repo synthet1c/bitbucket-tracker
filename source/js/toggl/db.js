@@ -1,10 +1,17 @@
 import {
   getProjectEntries,
+  getProject,
   setProjects,
+  addProject,
+  createProject,
+  setNames,
 } from './projects'
 
 import {
-
+  getByTimestamp,
+  getEntryProject,
+  setCurrent,
+  setEntries,
 } from './entries'
 
 import {
@@ -12,6 +19,7 @@ import {
   getClient,
   addClient,
   getClientEntries,
+  createOrGetClient,
 } from './clients'
 
 import {
@@ -21,6 +29,10 @@ import {
   traceError,
   colorLog,
   prop,
+  mixin,
+  roundMinutes,
+  query,
+  post,
 } from './utils'
 
 export const store = (key, value) => localStorage.setItem(key, JSON.stringify(value))
@@ -34,7 +46,31 @@ export const retrieve = key => {
     : {}
 }
 
-const db = DB({
+const DB = schema => {
+  const db = Object.assign({}, schema, retrieve('toggl'))
+  return Object.assign({},
+    {
+      getDB: () => db,
+      save: () => store('toggl', db),
+      getEntries: () => db.entries,
+    },
+    mixin(
+      setEntries,
+      getProjectEntries,
+      setCurrent,
+      setProjects,
+      setClients,
+      getClient,
+      addClient,
+      getClientEntries,
+      createOrGetClient,
+      setNames,
+      getByTimestamp
+    )(db)
+  )
+}
+
+export const db = DB({
   state: {
     lastUpdated: 0,
     projects: 0,
@@ -46,28 +82,6 @@ const db = DB({
   current: {},
   timestamp: []
 })
-
-console.log('roundMinutes', roundMinutes(6801))
-console.log('roundMinutes', roundMinutes(3600))
-
-const DB = schema => {
-  const db = Object.assign({}, schema, retrieve('toggl'))
-  return {
-    setEntries: setEntries(db),
-    getEntries: () => db.entries,
-    getProjectEntries: getProjectEntries(db),
-    setCurrent: setCurrent(db),
-    setProjects: setProjects(db),
-    setClients: setClients(db),
-    getClient: getClient(db),
-    addClient: addClient(db),
-    getClientEntries: getClientEntries(db),
-    setNames: setNames(db),
-    getDB: () => db,
-    save: () => store('toggl', db),
-    getByTimestamp: getByTimestamp(db)
-  }
-}
 
 // initProjects :: _ -> Promise.then
 export const initProjects = () => {
@@ -92,12 +106,13 @@ export const initProjects = () => {
 
 initProjects()
   .then(() => {
-
+    console.log('inited')
   })
 
 // createProject({
 //   name: 'aae'
 // })
 
+console.log('dbee', db)
 
-createOrGetClient({ name: 'another-16' })
+db.createOrGetClient({ name: 'another-16' })
