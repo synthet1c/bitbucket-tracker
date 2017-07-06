@@ -170,7 +170,7 @@ const Store = (initialValue = {}) => {
 }
 
 const log = curry((color, name, ...args) => {
-  console.log(`%c ${name} `, `background:${color};color:#fff;font-weight:bold`, ...args)
+  console.log(`%c${name}`, `color:${color};font-weight:bold`, ...args)
 })
 
 const blueLog = log('#3cf')
