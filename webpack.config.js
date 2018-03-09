@@ -15,7 +15,7 @@ module.exports = {
   },
   devtool: 'source-map',
   devServer: {
-    port: 3000,
+    port: 8008,
     historyApiFallback: {
       index: 'index.html'
     }

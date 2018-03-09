@@ -32,7 +32,7 @@ const CommitItem = ({
         <div className="commit__wrapper commit__wrapper--times">
           <div className="commit__cell commit__cell--day"
             data-value={commit.date.format('dddd')}>
-            {commit.date.format('dddd Do')}
+            {commit.date.format('dddd Do MMM')}
           </div>
           <div className="commit__cell commit__cell--updated_at"
             data-value={commit.date.format('LT')}>

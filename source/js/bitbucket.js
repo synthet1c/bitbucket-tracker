@@ -42,16 +42,16 @@ export const commits = (account, repo) => {
 }
 
 export const myRepositories = (account) => {
-  const params = 'q=updated_on+>+' + encodeURIComponent(new Date().setDate(new Date().getDay() - 7).toISOString())
+  const params = 'q=updated_on+>+' + encodeURIComponent(new Date().setDate(new Date().getDay() - 9).toISOString())
   const url = `https://api.bitbucket.org/2.0/repositories/andrewFountain?sort=-updated_on&${params}`
   return query(url)
 }
 
 export const repositories = (account, repo, page = 1) => {
   console.log('moment', moment())
-  const date = moment().day(-7).format('YYYY-MM-DD')
+  const date = moment().day(-9).format('YYYY-MM-DD')
   console.log('moment', moment)
-  const aWeekAgo = new Date(new Date().setDate(new Date().getDay() - 7)).toISOString()
+  const aWeekAgo = new Date(new Date().setDate(new Date().getDay() - 9)).toISOString()
   const params = serialize({
     page,
     sort: '-updated_on',

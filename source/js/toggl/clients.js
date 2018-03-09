@@ -24,9 +24,8 @@ export const addClient = db => client => {
     db.clients[client.data.id] = client.data
     db.clientNames[client.data.name] = client.data.id
     store('toggl', db)
-  }
+ }
 }
-
 // createClient :: {client} -> Promise(client)
 export const createClient = client => {
   if (!client.name) {
