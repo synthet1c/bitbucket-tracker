@@ -12,6 +12,8 @@ export const pageLen = _.lensProp('pageLen')
 export const repository = _.lensProp('repository')
 export const timestamp = _.lensProp('timestamp')
 export const date = _.lensProp('date')
+export const startDate = _.lensProp('startDate')
+export const endDate = _.lensProp('endDate')
 
 export const set = {
   commits: _.set(commits),

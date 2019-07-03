@@ -285,10 +285,12 @@ const Thingy = component(
 
 // const Thingy = component(Thing, props, events)(state)
 
+/*
 ReactDOM.render(
   <Container store={store} />,
   document.getElementById('thing')
 )
+*/
 
 const operations = [
   REVERSE_NAME,

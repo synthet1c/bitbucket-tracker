@@ -47,7 +47,7 @@ export const myRepositories = (account) => {
   return query(url)
 }
 
-export const repositories = (account, repo, page = 1) => {
+export const repositories = (account, repo, page = 1, startDate, endDate) => {
   console.log('moment', moment())
   const date = moment().day(-9).format('YYYY-MM-DD')
   console.log('moment', moment)

@@ -36,14 +36,16 @@ const RepositoryItem = ({
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    frontend: state.frontend
+    frontend: state.frontend,
+    startDate: state.dateRange.startDate,
+    endDate: state.dateRange.endDate,
   }
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   repositoryEvents: repository => ({
     onClick: e => {
-      dispatch(fetchCommits('bwiredintegration', repository.name))
+      dispatch(fetchCommits('bwiredintegration', repository.name, ownProps.startDate, ownProps.endDate))
       // dispatch(addRepository(repository.name))
       dispatch(toggleRepository(repository.name))
       dispatch(refreshCommits())

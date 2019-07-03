@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import RepositoryItem from './RepositoryItem'
 import { addRepository, fetchRepositories } from '../actions/repositories'
 let key = 0
-const RepositoryList = ({ repositories, loadMore }) => (
+const RepositoryList = ({ repositories, loadMore, startDate, endDate }) => (
   <div className="list list--repositories">
     <div className="list__inner">
       <div className="list__heading">
@@ -31,13 +31,15 @@ const RepositoryList = ({ repositories, loadMore }) => (
 const mapStateToProps = (state) => {
   console.log('RepositoryList', state)
   return {
-    repositories: state.entities.repositories
+    repositories: state.entities.repositories,
+    startDate: state.dateRange.startDate,
+    endDate: state.dateRange.endDate,
   }
 }
 
 const mapDispatchToProps = (dispatch, props) => ({
   loadMore: (name, page) => () => {
-    dispatch(fetchRepositories('bwiredintegration', name, page))
+    dispatch(fetchRepositories('bwiredintegration', name, page, props.startDate, props.endDate))
   }
 })
 

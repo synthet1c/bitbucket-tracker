@@ -13,10 +13,12 @@ export const addRepository = (repository) => {
 }
 
 export const REQUEST_REPOSITORIES = 'REQUEST_REPOSITORIES'
-export const requestRepositories = (account, repository) => ({
+export const requestRepositories = (account, repository, startDate, endDate) => ({
   type: REQUEST_REPOSITORIES,
   account,
-  repository
+  repository,
+  startDate,
+  endDate,
 })
 
 export const LOAD_MORE_REPOSITORIES = 'LOAD_MORE_REPOSITORIES'
@@ -58,11 +60,11 @@ export const failedRepositoriesRequest = (error) => ({
   recievedAt: Date.now()
 })
 
-export const fetchRepositories = (account, repository, page) => (dispatch) => {
+export const fetchRepositories = (account, repository, page, startDate, endDate) => (dispatch) => {
 
-  dispatch(requestRepositories(account, repository))
+  dispatch(requestRepositories(account, repository, startDate, endDate))
 
-  return repositories(account, repository, page)
+  return repositories(account, repository, page, startDate, endDate)
     .fork(
       error => dispatch(failedRepositoriesRequest(error)),
       response => dispatch(recieveRepositories(response))

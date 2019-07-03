@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import RepositoryList from './RepositoryList'
 import CommitList from './CommitList'
+import DateRange from './DateRange'
 
 import '../../scss/main.scss'
 
@@ -11,6 +12,7 @@ const App = ({ repositories }) => {
       <div className="main__inner">
         <div className="main__header">
           <h3 className="main__heading">Main</h3>
+          <DateRange />
         </div>
         <div className="main__content">
           <RepositoryList />

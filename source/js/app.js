@@ -7,8 +7,9 @@ import createLogger from 'redux-logger'
 import timesheetApp from './reducers'
 import App from './components/App'
 import actions from './actions.js'
-import './otherapp'
-import './toggl/db'
+import moment from 'moment'
+// import './otherapp'
+// import './toggl/db'
 
 const state = {
   selectedRepositiory: 'demo-b2bwatchescorednacom',
@@ -29,6 +30,10 @@ const state = {
       didInvalidate: false,
       items: []
     }
+  },
+  dateRange: {
+    startDate: 0,
+    endDate: 0,
   }
 }
 
@@ -43,7 +48,13 @@ let store = createStore(
 
 console.log(actions)
 store.dispatch(
-  actions.fetchRepositories('bwiredintegration', 'demo-b2bwatchescorednacom')
+  actions.fetchRepositories(
+      'bwiredintegration',
+      'demo-b2bwatchescorednacom',
+      1,
+      moment().subtract(1, 'w').toDate(),
+      moment().toDate(),
+  )
 )
 
 render(

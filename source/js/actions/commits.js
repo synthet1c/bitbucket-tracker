@@ -61,11 +61,11 @@ export const refreshCommits = () => ({
   type: REFRESH_COMMITS
 })
 
-export const fetchCommits = (account, repository) => (dispatch) => {
+export const fetchCommits = (account, repository, startDate, endDate) => (dispatch) => {
 
-  dispatch(requestRepositoryCommits(account, repository))
+  dispatch(requestRepositoryCommits(account, repository, startDate, endDate))
 
-  return bitbicket.commits(account, repository)
+  return bitbicket.commits(account, repository, startDate, endDate)
     .fork(
       error => dispatch(failedRepositoriesRequest(error)),
       response => dispatch(recieveRepositoryCommits(response))
